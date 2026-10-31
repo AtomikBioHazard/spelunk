@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
 # Installs everything needed to run and develop spelunk on Pop!_OS 24.04.
 set -euo pipefail
 
