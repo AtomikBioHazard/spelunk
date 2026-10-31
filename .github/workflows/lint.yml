@@ -1,0 +1,49 @@
+name: Lint
+
+on:
+  pull_request:
+    branches: [develop, qa, main]
+  push:
+    branches: [develop, qa, main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      # Direct commits to protected branches are blocked locally; CI runs on those branches by design.
+      SKIP: no-commit-to-branch
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      # Same package and version a contributor gets on Pop!_OS 24.04.
+      - name: Install pre-commit
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pre-commit
+
+      - name: Run all checks
+        run: pre-commit run --all-files --show-diff-on-failure
+
+      # Dependabot commits carry release notes in their body; they are squash-merged with the PR title only.
+      - name: Check commit messages
+        if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          for commit in $(git rev-list --no-merges "${BASE_SHA}..${HEAD_SHA}"); do
+            git log -1 --format=%B "$commit" > "${RUNNER_TEMP}/commit-message"
+            echo "Checking ${commit}: $(git log -1 --format=%s "$commit")"
+            pre-commit run --hook-stage commit-msg --commit-msg-filename "${RUNNER_TEMP}/commit-message"
+          done
