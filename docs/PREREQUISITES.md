@@ -1,13 +1,14 @@
 # Prerequisites
 
-## Runtime (installed automatically by the .deb)
+## Runtime
 
-`pop-launcher`, `recoll`, `python3-recoll`, `python3`, `xdg-utils`
+The packages Spelunk needs at runtime are listed in `RUNTIME_PACKAGES` in
+`scripts/install-dev-deps.sh`, the single source of truth for package lists.
 
 ## Development
 
-Run `./scripts/install-dev-deps.sh`. It installs the runtime packages plus
-`python3-pip`, `python3-full`, `lintian` and `shellcheck`.
+Run `./scripts/install-dev-deps.sh` on Pop!_OS. It installs the runtime packages plus the
+development tools listed in `DEVELOPMENT_PACKAGES` in the same script.
 
 ## Recoll configuration
 
