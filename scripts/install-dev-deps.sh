@@ -4,6 +4,7 @@ set -euo pipefail
 
 readonly SUPPORTED_DISTRO_ID="pop"
 readonly OS_RELEASE_FILE="/etc/os-release"
+readonly ROOT_USER_ID=0
 readonly RUNTIME_PACKAGES=(pop-launcher recoll python3-recoll python3 xdg-utils)
 readonly DEVELOPMENT_PACKAGES=(python3-pip python3-full lintian shellcheck)
 
@@ -22,9 +23,21 @@ verify_supported_system() {
   fi
 }
 
+run_as_root() {
+  if [[ "$EUID" -eq "$ROOT_USER_ID" ]]; then
+    "$@"
+    return
+  fi
+  if ! command -v sudo >/dev/null; then
+    print_error "sudo is required to install packages. Run this script as root or install sudo."
+    exit 1
+  fi
+  sudo "$@"
+}
+
 install_packages() {
-  sudo apt-get update
-  sudo apt-get install -y "${RUNTIME_PACKAGES[@]}" "${DEVELOPMENT_PACKAGES[@]}"
+  run_as_root apt-get update
+  run_as_root apt-get install -y "${RUNTIME_PACKAGES[@]}" "${DEVELOPMENT_PACKAGES[@]}"
 }
 
 verify_supported_system
