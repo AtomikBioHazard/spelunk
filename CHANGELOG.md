@@ -8,3 +8,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 ### Added
 
 - Development dependency installer (`scripts/install-dev-deps.sh`) and prerequisites documentation.
+
+### Security
+
+- Prerequisites document the secret exclusions and index protections required before indexing a home directory.
