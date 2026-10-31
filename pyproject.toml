@@ -1,0 +1,11 @@
+# Tool configuration only: spelunk is not distributed as a Python package.
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# Baseline rule set: pycodestyle, pyflakes, import order, bugbear, pyupgrade.
+# The Phase 2 refactor enables the stricter rules that encode the project standards
+# (naming, magic values, blind excepts, early returns, complexity, commented-out code).
+select = ["E", "F", "W", "I", "B", "UP"]
