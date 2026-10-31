@@ -42,3 +42,32 @@ shows matching text snippets in the launcher. Anything indexed can therefore app
 - Keep the index private: `chmod 700 ~/.recoll`.
 - After changing exclusions, rebuild the index so already-indexed secrets are purged:
   `recollindex -z`
+
+## Linting and checks
+
+All checks run through [pre-commit](https://pre-commit.com/), so your machine and CI use the same
+pinned tool versions. `./scripts/install-dev-deps.sh` installs `pre-commit`. Then, once per clone:
+
+```bash
+pre-commit install
+```
+
+Run every check on the whole repository at any time:
+
+```bash
+pre-commit run --all-files
+```
+
+What is checked:
+
+- Python: ruff lint and format.
+- Shell: ShellCheck and shfmt (settings in `.shellcheckrc` and `.editorconfig`).
+- GitHub workflows (actionlint) and the Dependabot configuration (schema).
+- File hygiene: whitespace, line endings, YAML and TOML validity, executable bits, large files.
+- Secrets: private-key detection, plus `.gitignore` patterns for common secret files.
+- Policy: no direct commits to `main`, `develop` or `qa`; an SPDX license identifier in every shell
+  and Python file; no lint suppressions (`noqa`, `shellcheck disable`, per-file ignores).
+- Commit messages: Conventional Commits, single line, no body.
+
+The Lint workflow re-runs the same checks on every pull request and push; `--no-verify` only skips
+them locally. Hook and action versions are updated by Dependabot after a 14-day cooldown.
