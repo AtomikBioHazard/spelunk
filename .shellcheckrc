@@ -1,0 +1,4 @@
+# Resolve `source=` directives relative to each script's own directory and follow them,
+# so shared helpers are analysed together with their callers.
+source-path=SCRIPTDIR
+external-sources=true
