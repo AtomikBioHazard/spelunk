@@ -3,13 +3,16 @@
 # Installs everything needed to run and develop spelunk on Pop!_OS 24.04.
 set -euo pipefail
 
+SCRIPT_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly SCRIPT_DIRECTORY
+# shellcheck source=../lib/common.sh
+source "${SCRIPT_DIRECTORY}/../lib/common.sh"
+
 readonly SUPPORTED_DISTRO_ID="pop"
 readonly OS_RELEASE_FILE="/etc/os-release"
 readonly ROOT_USER_ID=0
 readonly RUNTIME_PACKAGES=(pop-launcher recoll python3-recoll python3 xdg-utils)
-readonly DEVELOPMENT_PACKAGES=(lintian shellcheck)
-
-print_error() { printf 'ERROR: %s\n' "$1" >&2; }
+readonly DEVELOPMENT_PACKAGES=(lintian pre-commit)
 
 verify_supported_system() {
   local distro_id
