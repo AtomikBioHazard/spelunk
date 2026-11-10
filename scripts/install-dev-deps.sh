@@ -10,7 +10,6 @@ source "${SCRIPT_DIRECTORY}/../lib/common.sh"
 
 readonly SUPPORTED_DISTRO_ID="pop"
 readonly OS_RELEASE_FILE="/etc/os-release"
-readonly ROOT_USER_ID=0
 readonly RUNTIME_PACKAGES=(pop-launcher recoll python3-recoll python3 xdg-utils)
 readonly DEVELOPMENT_PACKAGES=(lintian pre-commit)
 
@@ -28,7 +27,7 @@ verify_supported_system() {
 }
 
 run_as_root() {
-  if [[ "$EUID" -eq "$ROOT_USER_ID" ]]; then
+  if is_root_user; then
     "$@"
     return
   fi
