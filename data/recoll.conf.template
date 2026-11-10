@@ -1,0 +1,18 @@
+# spelunk: Recoll configuration template.
+# spelunk-setup installs it only when you have no Recoll settings yet; it never replaces
+# an existing configuration. This file is the single source of truth for what is indexed.
+
+# Index the whole home directory.
+topdirs = ~
+
+# Empty on purpose: overrides Recoll's default "/media" exclusion so external drives are indexed.
+skippedPaths =
+
+# Appended to Recoll's default exclusions (which already skip .cache, .git, __pycache__, ...).
+#   .*                                  hidden entries: SSH and GPG keys, tokens, app credentials
+#   Trash build dist node_modules venv  discarded or generated content
+#   *.env *.asc *.kdbx id_*             secret-bearing files Recoll indexes by default
+#   *.pem *.key *.p12 *.pfx *.gpg       not indexed by Recoll today; listed so a newer Recoll or a
+#                                       custom mimemap cannot start indexing them
+skippedNames+ = .* Trash build dist node_modules venv \
+*.env *.pem *.key *.p12 *.pfx *.gpg *.asc *.kdbx id_rsa id_ed25519 id_ecdsa
