@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Recoll real time indexer
+Comment=Runs in background to extract and index text from modified documents
+Icon=system-run
+# -x: without it the monitor exits on its own when it cannot see an X11 session, which happens
+# on Wayland desktops (verified on Pop!_OS 24.04: it exited within seconds without -x).
+Exec=recollindex -w 60 -m -x
+Terminal=false
+Type=Application
+Categories=Utility;Filesystem;Database;
+NoDisplay=true
+X-GNOME-Autostart-enabled=true
