@@ -12,20 +12,34 @@ development tools listed in `DEVELOPMENT_PACKAGES` in the same script.
 
 ## Recoll configuration
 
-Once the Spelunk package is installed, `spelunk-setup` applies this configuration automatically;
-until then, follow the manual steps below.
+After installing the package, run `spelunk-setup` once, as your normal user (never as root):
 
-- Index `~` (home directory).
-- Exclude every hidden file and directory (`.*`), plus `Trash build dist node_modules venv`. This
-  adds to Recoll's defaults, which already skip `.cache`, `.git`, `__pycache__`, etc.
-- Exclude files that usually hold secrets:
-  `*.env *.pem *.key *.p12 *.pfx *.gpg *.asc *.kdbx id_rsa id_ed25519 id_ecdsa`
-- `skippedPaths` is empty on purpose, so external drives under `/media` are indexed.
-- The real-time indexing daemon starts with the desktop session: `recollindex -w 60 -m`
+```bash
+spelunk-setup
+```
+
+It installs the Recoll configuration from `data/recoll.conf.template`, but only when you have no
+Recoll settings yet; an existing configuration is never overwritten. It also:
+
+- warns when your existing configuration does not exclude hidden files and directories (see
+  Security);
+- makes `~/.recoll` private to your user (mode 700);
+- enables the real-time indexer at login and starts it, logging to
+  `~/.local/state/spelunk/indexer.log`.
+
+Options: `--no-autostart`, `--no-indexer`, `--help`.
+
+The autostart entry runs `recollindex -w 60 -m -x`. Without `-x`, Recoll's real-time monitor exits
+on its own when it cannot see an X11 session; on Pop!_OS 24.04 it exited within seconds in tests.
+
+`data/recoll.conf.template` is the single source of truth for what is indexed: the home directory,
+minus hidden entries, build and dependency folders, and files that usually hold secrets.
+`skippedPaths` is empty on purpose, so external drives under `/media` are indexed.
 
 ## Manual equivalent
 
-1. Run `recoll` once and set the exclusions above under Preferences → Index configuration.
+1. Run `recoll` once and copy the exclusions from `data/recoll.conf.template` into
+   Preferences → Index configuration.
 2. Open Preferences → Indexing schedule → Real time indexing, then enable both
    "Start indexing daemon with my desktop session" and "also start indexing daemon right now".
 
@@ -35,13 +49,21 @@ Recoll stores the extracted text of every indexed document in `~/.recoll/xapiand
 shows matching text snippets in the launcher. Anything indexed can therefore appear on screen
 (screen sharing, shoulder surfing) and is readable from the index itself.
 
-- Keep the exclusions above. A default index of a home directory includes SSH private keys,
-  `.env` files, credential stores and browser profiles.
-- Exclusions match file names only and cannot catch every secret. Keep secrets out of indexed
-  directories.
-- Keep the index private: `chmod 700 ~/.recoll`.
-- After changing exclusions, rebuild the index so already-indexed secrets are purged:
-  `recollindex -z`
+- Keep the exclusions from `data/recoll.conf.template`. Tested against a real index, stock Recoll
+  indexes `.env` files, `.asc` files, KeePass files and extensionless private keys such as
+  `id_rsa`, plus everything inside hidden directories.
+- Exclusions match file names only: a private key saved as `backup_key` is still indexed. Keep
+  secrets out of indexed directories.
+- Keep the index private: `chmod 700 ~/.recoll` (`spelunk-setup` does this).
+- After changing exclusions, rebuild the index so already-indexed secrets are purged. While the
+  real-time indexer runs, `recollindex -z` fails ("Can't become exclusive indexer"), so stop it
+  first, rebuild (this can take a long time on a large home directory), then start it again:
+
+  ```bash
+  pkill -x recollindex
+  recollindex -z
+  spelunk-setup
+  ```
 
 ## Linting and checks
 
@@ -71,3 +93,9 @@ What is checked:
 
 The Lint workflow re-runs the same checks on every pull request and push; `--no-verify` only skips
 them locally. Hook and action versions are updated by Dependabot after a 14-day cooldown.
+
+## Tests
+
+`tests/run.sh` runs the shell tests. They need Recoll installed (`./scripts/install-dev-deps.sh`)
+and never touch your real `~/.recoll`: every test works in a temporary home with stubbed tools.
+The Test workflow runs them on every pull request and push.
