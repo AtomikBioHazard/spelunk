@@ -14,6 +14,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 - `spelunk-setup` command and Recoll configuration template.
 - Shell test suite (`tests/run.sh`) and a Test workflow in CI.
 - Architecture document describing the installed layout.
+- Launcher plugin: `in: <words>` full-text search through Recoll.
+- Protocol tests for the plugin, using a fake Recoll module.
 
 ### Security
 
