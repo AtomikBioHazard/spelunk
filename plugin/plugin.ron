@@ -1,0 +1,13 @@
+(
+    name: "Search Inside Documents",
+    description: "Full-text search powered by Recoll\nSyntax: in: <terms>",
+    bin: (path: "search_bridge.py"),
+    icon: Name("system-search-symbolic"),
+    long_lived: true,
+    query: (
+        regex: "^in:.*",
+        help: "in: ",
+        isolate: true,
+        priority: High,
+    ),
+)
