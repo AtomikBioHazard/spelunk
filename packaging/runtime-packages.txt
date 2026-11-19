@@ -1,0 +1,5 @@
+pop-launcher
+recoll
+python3-recoll
+python3
+xdg-utils
