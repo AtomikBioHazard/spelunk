@@ -10,7 +10,7 @@ source "${SCRIPT_DIRECTORY}/../lib/common.sh"
 
 readonly SUPPORTED_DISTRO_ID="pop"
 readonly OS_RELEASE_FILE="/etc/os-release"
-readonly RUNTIME_PACKAGES=(pop-launcher recoll python3-recoll python3 xdg-utils)
+readonly RUNTIME_PACKAGES_FILE="${SCRIPT_DIRECTORY}/../packaging/runtime-packages.txt"
 readonly DEVELOPMENT_PACKAGES=(lintian pre-commit)
 
 verify_supported_system() {
@@ -39,8 +39,12 @@ run_as_root() {
 }
 
 install_packages() {
+  local runtime_packages_text
+  local -a runtime_packages
+  runtime_packages_text="$(print_runtime_packages "$RUNTIME_PACKAGES_FILE")"
+  mapfile -t runtime_packages <<<"$runtime_packages_text"
   run_as_root apt-get update
-  run_as_root apt-get install -y "${RUNTIME_PACKAGES[@]}" "${DEVELOPMENT_PACKAGES[@]}"
+  run_as_root apt-get install -y "${runtime_packages[@]}" "${DEVELOPMENT_PACKAGES[@]}"
 }
 
 verify_supported_system
