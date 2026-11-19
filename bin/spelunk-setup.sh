@@ -115,7 +115,7 @@ warn_if_hidden_entries_are_indexed() {
   print_warning "Your Recoll configuration does not exclude hidden files and directories (.*)."
   print_warning "They can hold SSH keys, tokens and .env files, and their text would appear in launcher results."
   print_warning "To fix it: add '.*' to skippedNames, stop the indexer (pkill -x recollindex), run recollindex -z, then run spelunk-setup again."
-  print_warning "Details: Security section of docs/PREREQUISITES.md."
+  print_warning "Details: Security section of PREREQUISITES.md (/usr/share/doc/spelunk/ once installed, docs/ in the repository)."
 }
 
 install_recoll_config() {
