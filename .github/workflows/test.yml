@@ -22,10 +22,10 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install Recoll
+      - name: Install Recoll and lintian
         run: |
           sudo apt-get update
-          sudo apt-get install -y recoll python3-recoll
+          sudo apt-get install -y recoll python3-recoll lintian
 
       - name: Run shell tests
         run: tests/run.sh
