@@ -1,0 +1,42 @@
+name: Package
+
+on:
+  pull_request:
+    branches: [develop, qa, main]
+  push:
+    branches: [develop, qa, main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: package-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deb:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install packaging tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lintian
+
+      - name: Build the package
+        run: ./scripts/build-deb.sh --version-suffix "~dev.${GITHUB_SHA::7}" --output-directory dist
+
+      - name: Check the package with lintian
+        run: lintian --fail-on warning --tag-display-limit 0 dist/*.deb
+
+      - name: Upload the package
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: spelunk-deb
+          path: dist/*.deb
+          if-no-files-found: error
+          retention-days: 14
