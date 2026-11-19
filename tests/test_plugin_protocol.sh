@@ -29,15 +29,6 @@ readonly DOCUMENTS_JSON='{
 
 json_get() { python3 "${REPO_ROOT}/tests/lib/json_get.py" "$@"; }
 
-write_stub() {
-  local stub_path="${SANDBOX}/stubs/$1"
-  {
-    printf '#!/bin/sh\n'
-    cat
-  } >"$stub_path"
-  chmod +x "$stub_path"
-}
-
 write_fake_recoll_module() {
   : >"${SANDBOX}/fake/recoll/__init__.py"
   cat >"${SANDBOX}/fake/recoll/recoll.py" <<'FAKE'

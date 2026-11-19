@@ -14,15 +14,6 @@ readonly PRIVATE_DIRECTORY_MODE=700
 readonly PRIVATE_FILE_MODE=600
 readonly ROOT_USER_ID=0
 
-write_stub() {
-  local stub_path="${SANDBOX}/stubs/$1"
-  {
-    printf '#!/bin/sh\n'
-    cat
-  } >"$stub_path"
-  chmod +x "$stub_path"
-}
-
 create_sandbox() {
   SANDBOX="$(mktemp -d)"
   trap 'rm -rf "$SANDBOX"' EXIT
@@ -181,10 +172,8 @@ test_missing_python_module_is_reported() {
 test_missing_recollindex_is_reported() {
   create_sandbox
   rm "${SANDBOX}/stubs/recollindex"
-  mkdir "${SANDBOX}/filtered-bin"
-  ln -s /usr/bin/* "${SANDBOX}/filtered-bin/"
-  rm -f "${SANDBOX}/filtered-bin/recollindex"
-  export TEST_BASE_PATH="${SANDBOX}/filtered-bin"
+  TEST_BASE_PATH="$(create_path_without recollindex)"
+  export TEST_BASE_PATH
   run_setup
   assert_equals 1 "$setup_exit_code" "setup fails"
   assert_contains "$setup_output" "Recoll is not installed" "names the problem"
