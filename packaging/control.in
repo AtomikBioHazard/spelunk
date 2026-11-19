@@ -1,0 +1,13 @@
+Package: spelunk
+Version: @VERSION@
+Section: utils
+Priority: optional
+Architecture: all
+Installed-Size: @INSTALLED_SIZE@
+Depends: @DEPENDS@
+Maintainer: Dietrich Fdz <atomikbiohazard@gmail.com>
+Homepage: https://github.com/AtomikBioHazard/spelunk
+Description: Full-text document search inside the COSMIC launcher
+ Spelunk adds an "in: <words>" search to the Super-key launcher on
+ Pop!_OS / COSMIC, powered by Recoll. After installing, run
+ "spelunk-setup" once as your normal user.
