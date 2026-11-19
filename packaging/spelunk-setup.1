@@ -1,0 +1,46 @@
+.TH SPELUNK\-SETUP 1 "" "spelunk" "User Commands"
+.SH NAME
+spelunk\-setup \- prepare your account for the spelunk launcher plugin
+.SH SYNOPSIS
+.B spelunk\-setup
+[\fB\-\-no\-autostart\fR] [\fB\-\-no\-indexer\fR] [\fB\-\-help\fR]
+.SH DESCRIPTION
+.B spelunk\-setup
+is a one\-time, per\-user setup for spelunk, which adds an "in: <words>" full\-text search to the
+Super\-key launcher on Pop!_OS with COSMIC.
+Run it as your normal user, never as root.
+.PP
+It installs a Recoll configuration, but only when you have no Recoll settings yet: an existing
+configuration is never overwritten.
+It makes \fI~/.recoll\fR private to your user, enables the real\-time indexer at login and starts it.
+.PP
+When an existing Recoll configuration does not exclude hidden files and directories, it warns you,
+because their text, which can include keys and tokens, would appear in launcher results.
+.SH OPTIONS
+.TP
+.B \-\-no\-autostart
+Do not start the indexer with your desktop session.
+.TP
+.B \-\-no\-indexer
+Do not start the indexer now.
+.TP
+.B \-\-help
+Show a short help text.
+.SH FILES
+.TP
+.I ~/.recoll/recoll.conf
+The Recoll configuration.
+.TP
+.I ~/.config/autostart/recollindex.desktop
+The autostart entry for the real\-time indexer.
+.TP
+.I ~/.local/state/spelunk/indexer.log
+Output of the indexer started by spelunk\-setup.
+.SH SEE ALSO
+.BR recoll (1),
+.BR recollindex (1)
+.PP
+The Security section of
+.I /usr/share/doc/spelunk/PREREQUISITES.md
+.SH AUTHOR
+Dietrich Fdz <atomikbiohazard@gmail.com>
