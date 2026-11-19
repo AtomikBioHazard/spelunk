@@ -62,6 +62,26 @@ assert_files_identical() {
   fi
 }
 
+# Writes an executable stub named $1 into ${SANDBOX}/stubs; its body is read from stdin.
+write_stub() {
+  local stub_path="${SANDBOX}/stubs/$1"
+  {
+    printf '#!/bin/sh\n'
+    cat
+  } >"$stub_path"
+  chmod +x "$stub_path"
+}
+
+# Creates a directory of links to everything in /usr/bin except the given command, and prints its
+# path. Used to simulate a machine where that command is not installed.
+create_path_without() {
+  local excluded_command="$1" directory="${SANDBOX}/path-without-$1"
+  mkdir -p "$directory"
+  ln -s /usr/bin/* "${directory}/"
+  rm -f "${directory}/${excluded_command}"
+  printf '%s' "$directory"
+}
+
 run_test() {
   local test_name="$1"
   tests_run=$((tests_run + 1))
