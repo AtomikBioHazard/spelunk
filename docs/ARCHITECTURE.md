@@ -11,9 +11,31 @@ resolved path and runs identically from a checkout and from the installed packag
 | `lib/` | `/usr/lib/spelunk/lib/` |
 | `data/` | `/usr/lib/spelunk/data/` |
 | `plugin/` | `/usr/lib/pop-launcher/plugins/spelunk/` |
+| `packaging/spelunk-setup.1` | `/usr/share/man/man1/spelunk-setup.1.gz` |
+| `README.md`, `docs/PREREQUISITES.md` | `/usr/share/doc/spelunk/` |
+| `LICENSE` | `/usr/share/doc/spelunk/copyright` |
+| `CHANGELOG.md` | `/usr/share/doc/spelunk/changelog.gz`, converted to Debian format (see below) |
 
 Scripts resolve symlinks (`readlink -f`) before locating `../lib` and `../data`. Keep that when
 adding scripts, and update this table whenever the layout changes.
+
+## Package build
+
+`scripts/build-deb.sh` builds the `.deb`. What goes into the package is one dictionary,
+`INSTALLED_FILES`, in that script: each line maps a path inside the package to its mode and its
+source in the repository, so adding a file to the package is adding a line. The test
+`tests/test_deb_package.sh` holds its own copy of the expected layout and fails on any difference.
+
+- **Dependencies** come from `packaging/runtime-packages.txt`, the same list the installer uses.
+- **Changelog:** Debian requires its own format, so `packaging/changelog-to-debian.awk` converts the
+  section of `CHANGELOG.md` for the version being built (the Unreleased section when no dated
+  section exists). `CHANGELOG.md` stays the only changelog.
+- **Reproducible:** file timestamps and the changelog date are clamped to the date of the last
+  commit, so the same commit always gives byte-identical packages.
+- **Post-install script** (`packaging/postinst.sh`) only prints the next step. A system package
+  must not change per-user state, so everything per user is done by `spelunk-setup`.
+- **Quality gate:** lintian must report nothing, and no lintian override is allowed, in the same
+  way no lint suppression is.
 
 ## Launcher plugin
 
